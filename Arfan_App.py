@@ -9,8 +9,7 @@ st.write("Enter student lifestyle habits to predict whether they will pass or fa
 # Load the saved model pipeline
 @st.cache_resource
 def load_model():
-    return joblib.load('Mid_Term_Project/student_performance_model.pkl')
-
+    return joblib.load('student_performance_model.pkl')
 model = load_model()
 
 # User Inputs in Sidebar
