@@ -5,8 +5,13 @@ import joblib
 # Set page configuration with custom logo title
 st.set_page_config(page_title="Student Performance Prediction", page_icon="🎓", layout="wide")
 
-# Display Logo image in the sidebar top corner
+# Display Profile Image in the sidebar top corner
 st.sidebar.image("https://i.postimg.cc/vDFNncsc/Arfan-2.jpg", use_container_width=True)
+
+# Profile Name & Subtitle below image
+st.sidebar.markdown("### **Mohammed Arfan**")
+st.sidebar.caption("Data Science Student, Parami University")
+st.sidebar.divider()
 
 # Main Title & Header
 st.title("🎓 Student Performance Prediction App")
