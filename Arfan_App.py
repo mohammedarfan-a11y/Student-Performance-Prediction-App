@@ -2,27 +2,34 @@ import streamlit as st
 import pandas as pd
 import joblib
 
-# Set page title
+# Set page configuration with custom logo title
+st.set_page_config(page_title="Student Performance Prediction", page_icon="🎓")
+
+# Display Logo image in the sidebar top corner
+st.sidebar.image("https://i.postimg.cc/vDFNncsc/Arfan-2.jpg", use_container_width=True)
+
+# Main Title & Header
 st.title("🎓 Student Performance Prediction App")
 st.write("Enter student lifestyle habits to predict whether they will pass or fail.")
 
-# Load the saved model pipeline
+# Load the saved model pipeline directly from root directory
 @st.cache_resource
 def load_model():
     return joblib.load('student_performance_model.pkl')
+
 model = load_model()
 
-# User Inputs in Sidebar
+# User Inputs in Sidebar (Changed to manual number inputs)
 st.sidebar.header("Student Habit Inputs")
 
-study_hours = st.sidebar.slider("Study Hours / Day", 0.0, 10.0, 5.0, 0.1)
-social_media = st.sidebar.slider("Social Media Hours / Day", 0.0, 10.0, 2.0, 0.1)
-netflix = st.sidebar.slider("Netflix Hours / Day", 0.0, 10.0, 1.5, 0.1)
-attendance = st.sidebar.slider("Attendance Percentage", 0.0, 100.0, 85.0, 1.0)
-sleep = st.sidebar.slider("Sleep Hours / Day", 0.0, 12.0, 7.0, 0.5)
-exercise = st.sidebar.slider("Exercise Days / Week", 0, 7, 3)
-mental_health = st.sidebar.slider("Mental Health Rating (1-10)", 1, 10, 7)
-age = st.sidebar.number_input("Age", 17, 30, 20)
+study_hours = st.sidebar.number_input("Study Hours / Day", min_value=0.0, max_value=24.0, value=5.0, step=0.1)
+social_media = st.sidebar.number_input("Social Media Hours / Day", min_value=0.0, max_value=24.0, value=2.0, step=0.1)
+netflix = st.sidebar.number_input("Netflix Hours / Day", min_value=0.0, max_value=24.0, value=1.5, step=0.1)
+attendance = st.sidebar.number_input("Attendance Percentage (%)", min_value=0.0, max_value=100.0, value=85.0, step=1.0)
+sleep = st.sidebar.number_input("Sleep Hours / Day", min_value=0.0, max_value=24.0, value=7.0, step=0.5)
+exercise = st.sidebar.number_input("Exercise Days / Week", min_value=0, max_value=7, value=3, step=1)
+mental_health = st.sidebar.number_input("Mental Health Rating (1-10)", min_value=1, max_value=10, value=7, step=1)
+age = st.sidebar.number_input("Age", min_value=15, max_value=60, value=20, step=1)
 
 diet = st.sidebar.selectbox("Diet Quality", ["Poor", "Fair", "Good"])
 parent_edu = st.sidebar.selectbox("Parental Education Level", ["High School", "Bachelor", "Master", "PhD"])
@@ -31,7 +38,7 @@ extracurricular = st.sidebar.selectbox("Extracurricular Participation", ["No", "
 gender = st.sidebar.selectbox("Gender", ["Female", "Male", "Other"])
 part_time = st.sidebar.selectbox("Part-Time Job", ["No", "Yes"])
 
-# Combine inputs into DataFrame matching original features
+# Combine inputs into DataFrame matching feature columns
 input_data = pd.DataFrame([{
     'age': age,
     'gender': gender,
@@ -50,7 +57,7 @@ input_data = pd.DataFrame([{
 }])
 
 # Predict button
-if st.button("Predict Result"):
+if st.button("Predict Result", type="primary"):
     prediction = model.predict(input_data)[0]
     probabilities = model.predict_proba(input_data)[0]
 
