@@ -23,8 +23,8 @@ def load_model():
     
     # Check if the model or pipeline's final estimator is Logistic Regression
     if isinstance(model, Pipeline):
-        classifier = model.steps[-1][1]
-        if not isinstance(classifier, LogisticRegression):
+        final_estimator = model.steps[-1][1]
+        if not isinstance(final_estimator, LogisticRegression):
             st.warning("⚠️ Loaded model pipeline estimator is not a LogisticRegression instance. Please ensure your saved `.pkl` file was trained using Logistic Regression.")
     elif not isinstance(model, LogisticRegression):
         st.warning("⚠️ Loaded file is not a LogisticRegression model. Please ensure your saved `.pkl` file was trained using Logistic Regression.")
