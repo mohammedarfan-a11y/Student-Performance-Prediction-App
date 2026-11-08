@@ -1,11 +1,10 @@
 import streamlit as st
 import pandas as pd
 import joblib
+from sklearn.linear_model import LogisticRegression
+from sklearn.pipeline import Pipeline
 
-# Set page configuration with custom logo title
 st.set_page_config(page_title="Student Performance Prediction", page_icon="🎓", layout="wide")
-
-# Display Profile Image in the sidebar top corner
 st.sidebar.image("https://i.postimg.cc/vDFNncsc/Arfan-2.jpg", use_container_width=True)
 
 # Profile Name & Subtitle below image
@@ -15,12 +14,22 @@ st.sidebar.divider()
 
 # Main Title & Header
 st.title("🎓 Student Performance Prediction App")
-st.write("Enter student lifestyle habits to predict whether they will pass or fail.")
+st.write("Enter student lifestyle habits to predict whether they will pass or fail using Logistic Regression.")
 
-# Load the saved model pipeline directly from root directory
+# Load the saved Logistic Regression model pipeline
 @st.cache_resource
 def load_model():
-    return joblib.load('student_performance_model.pkl')
+    model = joblib.load('student_performance_model.pkl')
+    
+    # Check if the model or pipeline's final estimator is Logistic Regression
+    if isinstance(model, Pipeline):
+        classifier = model.steps[-1][1]
+        if not isinstance(classifier, LogisticRegression):
+            st.warning("⚠️ Loaded model pipeline estimator is not a LogisticRegression instance. Please ensure your saved `.pkl` file was trained using Logistic Regression.")
+    elif not isinstance(model, LogisticRegression):
+        st.warning("⚠️ Loaded file is not a LogisticRegression model. Please ensure your saved `.pkl` file was trained using Logistic Regression.")
+        
+    return model
 
 model = load_model()
 
@@ -70,11 +79,14 @@ st.divider()
 
 # Predict button and outcome below inputs
 if st.button("Predict Result", type="primary", use_container_width=True):
-    prediction = model.predict(input_data)[0]
-    probabilities = model.predict_proba(input_data)[0]
+    try:
+        prediction = model.predict(input_data)[0]
+        probabilities = model.predict_proba(input_data)[0]
 
-    st.subheader("📊 Prediction Outcome")
-    if prediction == 1:
-        st.success(f"🎉 Result: **PASS** (Confidence: {probabilities[1]*100:.1f}%)")
-    else:
-        st.error(f"⚠️ Result: **FAIL** (Confidence: {probabilities[0]*100:.1f}%)")
+        st.subheader("📊 Prediction Outcome (Logistic Regression)")
+        if prediction == 1:
+            st.success(f"🎉 Result: **PASS** (Confidence: {probabilities[1]*100:.1f}%)")
+        else:
+            st.error(f"⚠️ Result: **FAIL** (Confidence: {probabilities[0]*100:.1f}%)")
+    except Exception as e:
+        st.error(f"An error occurred during prediction: {e}")
